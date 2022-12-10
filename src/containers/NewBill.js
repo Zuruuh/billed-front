@@ -2,6 +2,8 @@ import { ROUTES_PATH } from '../constants/routes.js';
 import Logout from './Logout.js';
 
 export default class NewBill {
+  static IMAGE_ALLOWED_MIME_TYPES = ['image/png', 'image.jpeg'];
+
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document;
     this.onNavigate = onNavigate;
@@ -17,10 +19,22 @@ export default class NewBill {
     this.billId = null;
     new Logout({ document, localStorage, onNavigate });
   }
+
   handleChangeFile = (e) => {
     e.preventDefault();
     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
+
+    if (
+      !NewBill.IMAGE_ALLOWED_MIME_TYPES.some(
+        (mimeType) => mimeType === file.type
+      )
+    ) {
+      e.target.value = null;
+
+      return;
+    }
+
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     const formData = new FormData();
@@ -44,6 +58,7 @@ export default class NewBill {
       })
       .catch((error) => console.error(error));
   };
+
   handleSubmit = (e) => {
     e.preventDefault();
     console.log(
