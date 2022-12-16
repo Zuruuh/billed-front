@@ -1,7 +1,7 @@
 {
   "name": "billed-front",
   "scripts": {
-    "test": "jest --coverage --noStackTrace --silent",
+    "test": "jest --coverage --noStackTrace --silent -c ./jest.config.js",
     "start": "live-server"
   },
   "type": "module",
