@@ -90,8 +90,8 @@ export default class {
       .html(
         `<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`
       );
-    if (typeof $('#modaleFileAdmin1').modal === 'function')
-      $('#modaleFileAdmin1').modal('show');
+
+    $('#modaleFileAdmin1').modal('show');
   };
 
   handleEditTicket(e, bill, bills) {
@@ -142,7 +142,6 @@ export default class {
   handleShowTickets(e, bills, index) {
     if (this.counter === undefined || this.index !== index) this.counter = 0;
     if (this.index === undefined || this.index !== index) this.index = index;
-    console.log(this.counter);
 
     if (this.counter % 2 === 0) {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)' });
@@ -161,13 +160,11 @@ export default class {
       $(`#status-bills-container${this.index}`).html('');
       this.counter++;
     }
-    console.log(this.counter);
 
     bills.forEach((bill) => {
       $(
         `#status-bills-container${this.index}[data-open=true] #open-bill${bill.id}`
       ).on('click', (e) => {
-        console.log(bill.id);
         this.handleEditTicket(e, bill, bills);
       });
     });
@@ -203,7 +200,7 @@ export default class {
         .bills()
         .update({ data: JSON.stringify(bill), selector: bill.id })
         .then((bill) => bill)
-        .catch(console.log);
+        .catch(console.error);
     }
   };
 }
