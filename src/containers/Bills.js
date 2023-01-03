@@ -34,6 +34,7 @@ export default class {
           billUrl ? `<img width=${imgWidth} src=${billUrl} alt="Bill" />` : ''
         }</div>`
       );
+
     $('#modaleFile').modal('show');
   };
 

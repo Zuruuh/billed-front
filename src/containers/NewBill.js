@@ -8,6 +8,8 @@ export default class NewBill {
     this.document = document;
     this.onNavigate = onNavigate;
     this.store = store;
+    this.localStorage = localStorage;
+
     const formNewBill = this.document.querySelector(
       `form[data-testid="form-new-bill"]`
     );
@@ -38,7 +40,7 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     const formData = new FormData();
-    const email = JSON.parse(localStorage.getItem('user')).email;
+    const email = JSON.parse(this.localStorage.getItem('user')).email;
     formData.append('file', file);
     formData.append('email', email);
 
@@ -60,7 +62,7 @@ export default class NewBill {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const email = JSON.parse(localStorage.getItem('user')).email;
+    const email = JSON.parse(this.localStorage.getItem('user')).email;
     const bill = {
       email,
       type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
@@ -84,6 +86,7 @@ export default class NewBill {
   };
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       this.store

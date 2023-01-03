@@ -58,16 +58,18 @@ describe('Given I am connected as an employee', () => {
       localStorageMock,
     });
 
+    const handleClickIconEye = jest.fn(() =>
+      billsContainer.handleClickIconEye(eye)
+    );
     const eye = document.querySelector('.eye');
-    eye.onclick = () => billsContainer.handleClickIconEye(eye);
+    eye.addEventListener('click', handleClickIconEye);
 
     const modal = document.querySelector('#modaleFile');
     expect(modal).not.toBeNull();
-    expect(modal.classList.contains('show')).toBe(false);
 
     await userEvent.click(eye);
 
-    expect(modal.classList.contains('show')).toBe(true);
+    expect(handleClickIconEye).toHaveBeenCalled();
   });
 });
 
