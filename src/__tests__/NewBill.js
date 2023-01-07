@@ -11,7 +11,9 @@ import Store from '../__mocks__/store.js';
 import router from '../app/Router.js';
 import { ROUTES_PATH } from '../constants/routes.js';
 import mockStore from '../__mocks__/store.js';
+import { bills } from '../fixtures/bills.js';
 
+jest.useFakeTimers();
 jest.mock('../app/Store', () => mockStore);
 
 describe('Given I am connected as an employee and I am on new bill page', () => {
@@ -95,25 +97,42 @@ describe('Given I am connected as an employee and I am on new bill page', () => 
 
       container.onNavigate = onSuccess;
 
-      const newBill = {
-        id: '123456789',
-        vat: '85',
-        fileUrl:
-          'https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        status: 'pending',
-        type: 'Hôtel et logement',
-        commentary: 'My Hotel',
-        name: 'My Name',
-        fileName: 'pexels-photo-164595.jpeg',
-        date: '2023-01-01',
-        amount: 80,
-        commentAdmin: 'ys',
-        email: 'myhotel@gmail.com',
-        pct: 21,
-      };
-
-      await container.updateBill(newBill);
+      await container.updateBill(bills[0]);
       expect(onSuccess).toHaveBeenCalled();
+    });
+
+    // Same behaviour as with 404, exception will always bubble up so no need to test both for now
+    describe('And the server returns a 500 error', () => {
+      test('Then it should be handled correctly', async () => {
+        jest.spyOn(mockStore, 'bills');
+        mockStore.bills.mockImplementationOnce(() => ({
+          update: () => new Promise((resolve, reject) => reject('Erreur 500')),
+        }));
+
+        const container = new NewBill({
+          document,
+          onNavigate: () => {},
+          localStorage: window.localStorage,
+          store: mockStore,
+        });
+
+        const onSuccess = jest.fn();
+        container.onNavigate = onSuccess;
+
+        // expect(async () => await container.updateBill(bills[0])).toThrow(
+        //   'Erreur 500'
+        // );
+        // I have to use this little "hack" here because the code above does not work for some reason ?
+        // I've tried multiple solutions (make everything awaitable, only use .then callbacks), but can't get it to work without
+        // jest failing with message "Call retries were exceeded" or "ERR_UNHANDLED_REJECTION"
+        try {
+          await container.updateBill(bills[0]);
+          expect(true).toBe(false);
+        } catch (e) {
+          expect(e).toBe('Erreur 500');
+        }
+        expect(onSuccess).not.toHaveBeenCalled();
+      });
     });
   });
 });

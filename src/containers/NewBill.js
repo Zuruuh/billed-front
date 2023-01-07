@@ -81,21 +81,21 @@ export default class NewBill {
       fileName: this.fileName,
       status: 'pending',
     };
-    this.updateBill(bill);
-    this.onNavigate(ROUTES_PATH['Bills']);
+
+    this.updateBill(bill).then(() => {
+      this.onNavigate(ROUTES_PATH['Bills']);
+    });
   };
 
   // not need to cover this function by tests
   /* istanbul ignore next */
-  updateBill = (bill) => {
+  updateBill = async (bill) => {
     if (this.store) {
-      this.store
+      await this.store
         .bills()
-        .update({ data: JSON.stringify(bill), selector: this.billId })
-        .then(() => {
-          this.onNavigate(ROUTES_PATH['Bills']);
-        })
-        .catch((error) => console.error(error));
+        .update({ data: JSON.stringify(bill), selector: this.billId });
+
+      this.onNavigate(ROUTES_PATH['Bills']);
     }
   };
 }
